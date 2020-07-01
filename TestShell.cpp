@@ -1,21 +1,30 @@
 ﻿#include <iostream>
 #include <queue>
+#include <sstream>
 #include <string>
 #include <vector>
-#include <sstream>
 
 #include "myProcess.h"
 
-#define NumOfresources 4
+//-------------------------------------------------------------------
+// Local Defines
+//-------------------------------------------------------------------
+#define NumOfresources 4 //资源种类数量
 
-struct Shell {
-	char command[8] = "";
-	char R_Pname[8] = "";
-	int reqNum = 0;
-}shell;
+/**
+ * @brief 格式化传入命令 
+ */
+struct Shell
+{
+	char command[8] = ""; //命令
+	char R_Pname[8] = ""; //进行名或资源名
+	int reqNum = 0;		  //请求数量或创建进程优先级
+} shell;
 
-void InitResources(Resources* resource); //初始化函数
-
+//-------------------------------------------------------------------
+// Member function
+//-------------------------------------------------------------------
+void InitResources(Resources *resource); //初始化函数
 
 int main()
 {
@@ -29,13 +38,13 @@ int main()
 	{
 		memset(proc[i].pcb.other_resources, 0, sizeof(proc[i].pcb.other_resources));
 	}
-	Priority prio = Priority::Prio_Init;
-	std::queue<int> readyList; //就绪队列
+	Priority prio = Priority::Prio_Init; //进程状态中间变量
+	std::queue<int> readyList;			 //就绪队列
 
 	//从文件读取指令
-	FILE* fp; //获取命令
+	FILE *fp; //获取命令
 	fopen_s(&fp, "input.txt", "r");
-	char fstr[256];
+	char fstr[256]; //单行指令最大长度
 
 	//PID计数器，防止PID重复
 	int PIDcounter = 1;
@@ -44,8 +53,9 @@ int main()
 	{
 		//命令分割与判断运行
 		std::stringstream ss(fstr);
-		ss >> shell.command;
 
+		//读取第一个字段，判断命令类型
+		ss >> shell.command;
 		if (!strcmp(shell.command, "cr")) //创建进程
 		{
 			//读取创建进程名和优先级
@@ -68,8 +78,7 @@ int main()
 			proc[PIDcounter].Create(shell.R_Pname[0], PIDcounter, prio);
 			proc[PIDcounter].pcb.status = process_state::PS_ready;
 			readyList.push(PIDcounter); //将新建的目录挂进就绪队列中
-			PIDcounter++;
-
+			PIDcounter++;				//自动增加PID号
 		}
 		else if (!strcmp(shell.command, "req")) //请求资源
 		{
@@ -88,8 +97,8 @@ int main()
 			{
 				//请求无法满足，从运行态转入阻塞态，并转入阻塞队列
 				proc[readyList.front()].pcb.status = process_state::PS_blocked; //标记为阻塞状态
-				proc[readyList.front()].pcb.block_resources = shell.reqNum; //记录最后需求资源数量
-				readyList.pop(); //移出就绪队列
+				proc[readyList.front()].pcb.block_resources = shell.reqNum;		//记录最后需求资源数量
+				readyList.pop();												//移出就绪队列
 			}
 		}
 		else if (!strcmp(shell.command, "de")) //释放资源，调整队列
@@ -97,7 +106,7 @@ int main()
 			ss >> shell.R_Pname;
 
 			//查找释放的进程号
-			int releasePid = 0; //释放资源的进程ID			
+			int releasePid = 0;							   //释放资源的进程ID
 			int length = sizeof(proc) / sizeof(myProcess); //进程最大数量
 			for (int i = 1; i < length; i++)
 			{
@@ -120,12 +129,10 @@ int main()
 					if (resource[i].avalibleNumber >= proc[readyPid].pcb.block_resources)
 					{
 						resource[i].block_list.pop(); //移出阻塞队列
-						readyList.push(readyPid); //移入就绪队列
+						readyList.push(readyPid);	  //移入就绪队列
 					}
-
 				}
 			}
-
 		}
 		else if (!strcmp(shell.command, "to")) //超时，进行调度
 		{
@@ -142,13 +149,17 @@ int main()
 		//打印当前运行内容
 		proc[readyList.front()].pcb.status = process_state::PS_running; //设为运行态
 		std::cout << proc[readyList.front()].pcb.PID_name << std::endl; //打印正在运行的任务
-
 	}
 	getchar();
 	return 0;
 }
 
-void InitResources(Resources* resource)
+/**
+ * @brief 用于初始化资源数组
+ * 
+ * @param resource 资源数组指针
+ */
+void InitResources(Resources *resource)
 {
 	for (int i = 0; i < NumOfresources; i++)
 	{

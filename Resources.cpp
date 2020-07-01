@@ -12,10 +12,12 @@ Resources::~Resources()
 }
 
 /**
- * @brief request resource when is only one resource
- *
- * @param pid process ID
- * @return status code
+ * @brief set new resources
+ * 
+ * @param setRid set rid
+ * @param setNum set initnum
+ * @return true success set
+ * @return false fall set
  */
 bool Resources::setResources(int setRid, int setNum)
 {
@@ -24,6 +26,12 @@ bool Resources::setResources(int setRid, int setNum)
 	avalibleNumber = setNum;
 	return true;
 }
+/**
+ * @brief request resource when is only one resource
+ *
+ * @param pid process ID
+ * @return status code
+ */
 int Resources::request(int pid)
 {
 	if (avalibleNumber == 1) //only one resource
@@ -74,7 +82,6 @@ int Resources::release(int pid)
 	else
 	{
 		pid = block_list.front();
-		block_list.pop();
 		return pid;
 	}
 }
@@ -96,7 +103,6 @@ int Resources::release(int pid, int num)
 	else
 	{
 		pid = block_list.front();
-		//block_list.pop();
 		return pid;
 	}
 }

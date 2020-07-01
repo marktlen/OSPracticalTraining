@@ -3,7 +3,6 @@
 #include "Resources.h"
 #include <string>
 
-
 /**
  * @brief Describe processs status
  * ready/running/blocked
@@ -17,7 +16,6 @@ enum process_state
 
 /**
  * @brief priority of process
- *
  */
 enum Priority
 {
@@ -26,20 +24,14 @@ enum Priority
 	Prio_System = 2
 };
 
-
 struct myPCB
 {
-	char PID_name;
-	int PID = -1;
-	int CPU_state;
-	/*int memory;
-	int open_files;*/
-	//Resources* other_resources;
-	int other_resources[256];
-	process_state status;
-	int block_resources;
-	//Process creation_tree;
-	Priority priority;
+	char PID_name;			  //进程名
+	int PID = -1;			  //进程号
+	int other_resources[256]; //进程占用资源
+	process_state status;	  //进程状态
+	int block_resources;	  //阻塞时，请求资源数量
+	Priority priority;		  //进程优先级
 };
 
 class myProcess
@@ -52,4 +44,3 @@ public:
 	void SetPID_name(char name);
 	void Create(char name, int setPID, Priority prio);
 };
-

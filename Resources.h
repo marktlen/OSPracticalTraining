@@ -1,4 +1,4 @@
-#include "queue"
+﻿#include "queue"
 
 /**
  * @brief return status code
@@ -18,20 +18,20 @@ enum statusCode
 class Resources
 {
 private:
-	int rid;            //Resource ID
-	int InitNum;        //Initial number of resources
+	int rid;	 //Resource ID
+	int InitNum; //Initial number of resources
 
 public:
-	int avalibleNumber; //Avalialbe number of resources currently
+	int avalibleNumber;			//Avalialbe number of resources currently
 	std::queue<int> block_list; //Waiting list
-	
+
 	Resources();
 	~Resources();
 
-	bool setResources(int setRid, int setNum); //��Դ����
-	int request(int pid);          //request resource when is only one resource
-	int request(int pid, int num); //request numbers of resource
+	bool setResources(int setRid, int setNum); //资源设置
+	int request(int pid);					   //request resource when is only one resource
+	int request(int pid, int num);			   //request numbers of resource
 
-	int release(int pid);
-	int release(int pid, int num);
+	int release(int pid);		   //释放单个资源
+	int release(int pid, int num); //释放多个资源
 };
