@@ -128,8 +128,9 @@ int main()
 					//查看阻塞的进程，是否达到运行条件，如果满足逐一返回对应资源的阻塞队列队首的pid
 					if (resource[i].avalibleNumber >= proc[readyPid].pcb.block_resources)
 					{
-						resource[i].block_list.pop(); //移出阻塞队列
-						readyList.push(readyPid);	  //移入就绪队列
+						resource[i].avalibleNumber -= proc[readyPid].pcb.block_resources; //添加资源
+						resource[i].block_list.pop();									  //移出阻塞队列
+						readyList.push(readyPid);										  //移入就绪队列
 					}
 				}
 			}
